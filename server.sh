@@ -10,7 +10,7 @@ if [ -z "$instance_public_ip" ]; then
 fi
 
 # SSH into the instance and execute commands
-ssh -i /Users/pottsj/Engineering/minecraft-server-setup/minecraft-key ubuntu@$instance_public_ip << EOF
+ssh -i /PATH/TO/KEY ubuntu@$instance_public_ip << EOF
 # Commands to execute on the remote server go here
 sudo apt update
 sudo apt upgrade -y
