@@ -1,8 +1,9 @@
 # minecraft-server-setup
 
-Author: Josiah Potts
-Date: 9 June 2024
-Assignment: Course Project 2 - System Administration
+##### Author: Josiah Potts
+##### Date: 9 June 2024
+##### Assignment: Course Project 2 - System Administration
+Note: These instructions are for macOS specifically.
 
 ## BACKGROUND
 This reposity automates the creation of an EC2 instance with Ubuntu on AWS using Terraform, as well as utilizing shell scripting to set up, start, and stop the server.
