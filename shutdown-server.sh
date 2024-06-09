@@ -1,10 +1,4 @@
 #!/bin/bash
-
-# Fetch the instance ID from Terraform state
-instance_id=$(terraform output -raw instance_id)
-
-# Stop the EC2 instance
-echo "Stopping the Minecraft server..."
+instance_id=$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type=="aws_instance" and .name=="minecraft") | .values.id')
 aws ec2 stop-instances --instance-ids $instance_id
-
 echo "Server stopped."
