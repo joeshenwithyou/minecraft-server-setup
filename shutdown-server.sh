@@ -1,4 +1,15 @@
 #!/bin/bash
-instance_id=$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type=="aws_instance" and .name=="minecraft") | .values.id')
-aws ec2 stop-instances --instance-ids $instance_id
-echo "Server stopped."
+
+# Print the current directory
+echo "Current directory: $(pwd)"
+
+# Print the contents of the state file
+echo "Terraform state file contents:"
+cat terraform.tfstate
+
+# Print the value of the output variable instance_id
+INSTANCE_ID=$(terraform output -raw instance_id)
+echo "Instance ID: $INSTANCE_ID"
+
+# Use AWS CLI to stop the instance
+aws ec2 stop-instances --instance-ids $INSTANCE_ID
