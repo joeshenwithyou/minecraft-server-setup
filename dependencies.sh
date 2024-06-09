@@ -1,11 +1,4 @@
-
-### `dependencies.sh`
-
-# This script installs all necessary dependencies on the local machine.
-
-```sh
 #!/bin/bash
-
 # Install Terraform
 echo "Installing Terraform..."
 curl -O https://releases.hashicorp.com/terraform/1.0.11/terraform_1.0.11_linux_amd64.zip
