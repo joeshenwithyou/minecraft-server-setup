@@ -1,55 +1,24 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.27"
-    }
-  }
-}
-
-variable "your_region" {
-  type        = string
-  description = "AWS region to deploy resources."
-}
-
 variable "your_ip" {
-  type        = string
   description = "IP allowed to SSH into the server."
+  type        = string
 }
 
 variable "your_public_key" {
-  type        = string
   description = "SSH public key for accessing the server."
+  type        = string
+}
+
+variable "your_region" {
+  description = "AWS region to deploy resources."
+  type        = string
+}
+
+output "instance_public_ip" {
+  value = aws_instance.minecraft.public_ip
 }
 
 provider "aws" {
   region = var.your_region
-}
-
-resource "aws_security_group" "minecraft" {
-  ingress {
-    description = "Allow SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["${var.your_ip}/32"]
-  }
-  ingress {
-    description = "Allow Minecraft"
-    from_port   = 25565
-    to_port     = 25565
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  tags = {
-    Name = "Minecraft"
-  }
 }
 
 resource "aws_key_pair" "home" {
@@ -57,12 +26,43 @@ resource "aws_key_pair" "home" {
   public_key = var.your_public_key
 }
 
+resource "aws_security_group" "minecraft" {
+  name        = "Minecraft"
+  description = "Managed by Terraform"
+
+  ingress {
+    description = "Allow Minecraft"
+    from_port   = 25565
+    to_port     = 25565
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${var.your_ip}/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "Minecraft"
+  }
+}
+
 resource "aws_instance" "minecraft" {
-  ami                         = "ami-0fdbd8587b1cf431e"
-  instance_type               = "t2.medium"
-  vpc_security_group_ids      = [aws_security_group.minecraft.id]
-  associate_public_ip_address = true
-  key_name                    = aws_key_pair.home.key_name
+  ami                    = "ami-0cf2b4e024cdb6960"
+  instance_type          = "t2.medium"
+  key_name               = aws_key_pair.home.key_name
+  vpc_security_group_ids = [aws_security_group.minecraft.id]
 
   tags = {
     Name = "Minecraft"
@@ -71,4 +71,8 @@ resource "aws_instance" "minecraft" {
 
 output "instance_ip_addr" {
   value = aws_instance.minecraft.public_ip
+}
+
+output "instance_id" {
+  value = aws_instance.minecraft.id
 }
